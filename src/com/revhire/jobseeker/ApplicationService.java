@@ -1,5 +1,5 @@
 package com.revhire.jobseeker;
-
+import org.apache.log4j.Logger;
 import java.sql.ResultSet;
 import java.util.Scanner;
 import com.revhire.dao.JobDAO;
@@ -8,36 +8,50 @@ import com.revhire.dao.NotificationDAO;
 import com.revhire.dao.ApplicationDAO;
 
 public class ApplicationService {
+	private static final Logger logger =
+	        Logger.getLogger(ApplicationService.class);
 	JobDAO jobDAO = new JobDAO();
 	NotificationDAO notificationDAO = new NotificationDAO();
     ApplicationDAO applicationDAO = new ApplicationDAO();
 
     public void applyJob(int jobSeekerId) {
-
+    	 
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter Job ID to apply: ");
         int jobId = sc.nextInt();
 
-        if (applicationDAO.hasAlreadyApplied(jobId, jobSeekerId)) {
-            System.out.println("⚠️ You have already applied for this job.");
+        JobDAO jobDAO = new JobDAO();
+
+        // ✅ CHECK JOB EXISTS FIRST
+        if (!jobDAO.isJobExists(jobId)) {
+            System.out.println(" Invalid Job ID. Please select a valid job.");
             return;
         }
 
-        if (applicationDAO.applyJob(jobId, jobSeekerId)) {
+        ApplicationDAO appDAO = new ApplicationDAO();
 
-            int employerId = jobDAO.getEmployerIdByJob(jobId);
+        if (applicationDAO.applyJob(jobSeekerId, jobId)) {
 
+            // 🔹 Job Seeker Notification
             notificationDAO.createNotification(
-                "EMPLOYER",
-                employerId,
-                "New application received for Job ID " + jobId
+                "JOBSEEKER",
+                jobSeekerId,
+                "You successfully applied for Job ID: " + jobId
             );
 
-            System.out.println("✔ Job applied successfully");
-        }
- else {
-            System.out.println("❌ Job application failed");
+            // 🔹 Employer Notification (IMPORTANT)
+            int employerId = jobDAO.getEmployerIdByJob(jobId);
+
+            if (employerId != -1) {
+                notificationDAO.createNotification(
+                    "EMPLOYER",
+                    employerId,
+                    "New application received for Job ID: " + jobId
+                );
+            }
+
+            System.out.println("✅ Job applied successfully");
         }
     }
     
@@ -74,27 +88,32 @@ public class ApplicationService {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter Application ID to withdraw: ");
-        int applicationId = sc.nextInt();
+        int appId = sc.nextInt();
 
-        if (!applicationDAO.canWithdraw(applicationId, jobSeekerId)) {
-            System.out.println("❌ Cannot withdraw this application (invalid or already processed).");
+        ApplicationDAO dao = new ApplicationDAO();
+
+        if (!dao.canWithdraw(appId, jobSeekerId)) {
+            System.out.println(
+                "Cannot withdraw this application (invalid or already processed)."
+            );
             return;
         }
 
-        System.out.print("Are you sure you want to withdraw? (Y/N): ");
-        char confirm = sc.next().charAt(0);
+        if (dao.withdrawApplication(appId)) {
 
-        if (confirm == 'Y' || confirm == 'y') {
+            notificationDAO.createNotification(
+                "JOBSEEKER",
+                jobSeekerId,
+                "You withdrew your application (Application ID: " + appId + ")"
+            );
 
-            if (applicationDAO.withdrawApplication(applicationId)) {
-                System.out.println("✅ Application withdrawn successfully");
-            } else {
-                System.out.println("❌ Withdrawal failed");
-            }
-
-        } else {
-            System.out.println("Withdrawal cancelled");
+            System.out.println("✅ Application withdrawn successfully");
         }
+ else {
+            System.out.println("❌ Withdrawal failed");
+        }
+
     }
+
 
 }

@@ -29,15 +29,15 @@ public class PasswordRecoveryService {
             PreparedStatement ps =
                 DBConnection.getConnection().prepareStatement(sql);
 
-            ps.setString(1, email);
+            ps.setString(1, email.toLowerCase());
             ps.setString(2, answer);
 
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                System.out.println("✅ Your password is: " + rs.getString(1));
+                System.out.println("✅ Your password is: " + rs.getString("password"));
             } else {
-                System.out.println("❌ Security answer incorrect");
+                System.out.println("❌ Incorrect security answer");
             }
 
         } catch (Exception e) {

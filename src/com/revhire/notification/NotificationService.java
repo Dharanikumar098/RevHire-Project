@@ -1,11 +1,15 @@
 package com.revhire.notification;
 
+import org.apache.log4j.Logger;
 import java.sql.ResultSet;
 import java.util.Scanner;
 
 import com.revhire.dao.NotificationDAO;
 
 public class NotificationService {
+
+    private static final Logger logger =
+        Logger.getLogger(NotificationService.class);
 
     NotificationDAO notificationDAO = new NotificationDAO();
 
@@ -39,12 +43,25 @@ public class NotificationService {
             int nid = sc.nextInt();
 
             if (nid != 0) {
-                notificationDAO.markAsRead(nid);
-                System.out.println("Notification marked as read");
+
+                boolean updated =
+                    notificationDAO.markAsRead(nid, userType, userId);
+
+                if (updated) {
+                    System.out.println("✅ Notification marked as read");
+                    logger.info("Notification marked as read | ID=" + nid +
+                                ", UserType=" + userType +
+                                ", UserID=" + userId);
+                } else {
+                    System.out.println("❌ Invalid notification ID. Cannot mark as read.");
+                    logger.warn("Invalid notification read attempt | ID=" + nid +
+                                ", UserType=" + userType +
+                                ", UserID=" + userId);
+                }
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while showing notifications", e);
         }
     }
 }

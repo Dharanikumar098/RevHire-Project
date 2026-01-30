@@ -165,13 +165,20 @@ public class EmployerDAO {
             String size,
             String website,
             String location,
-            String description) {
+            String description,
+            String securityQuestion,
+            String securityAnswer) {
 
         try {
+            // 🔹 CHECK DUPLICATE EMAIL
+            if (isEmailExists(email)) {
+                return false;
+            }
+
             String sql =
                 "INSERT INTO employers " +
-                "(employer_id, company_name, email, password, industry, company_size, website, location, description) " +
-                "VALUES (seq_employer.NEXTVAL,?,?,?,?,?,?,?,?)";
+                "(employer_id, company_name, email, password, industry, company_size, website, location, description, security_question, security_answer) " +
+                "VALUES (seq_employer.NEXTVAL,?,?,?,?,?,?,?,?,?,?)";
 
             PreparedStatement ps =
                 DBConnection.getConnection().prepareStatement(sql);
@@ -184,8 +191,30 @@ public class EmployerDAO {
             ps.setString(6, website);
             ps.setString(7, location);
             ps.setString(8, description);
+            ps.setString(9, securityQuestion);
+            ps.setString(10, securityAnswer);
 
             return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean isEmailExists(String email) {
+
+        try {
+            String sql = "SELECT employer_id FROM employers WHERE email=?";
+
+            PreparedStatement ps =
+                DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setString(1, email);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
 
         } catch (Exception e) {
             e.printStackTrace();

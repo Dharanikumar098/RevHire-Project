@@ -3,6 +3,7 @@ package com.revhire.main;
 import java.util.Scanner;
 
 import com.revhire.auth.AuthenticationService;
+import com.revhire.auth.PasswordRecoveryService;
 import com.revhire.jobseeker.JobSeekerService;
 import com.revhire.jobseeker.ResumeService;
 import com.revhire.jobseeker.JobSearchService;
@@ -61,6 +62,7 @@ public class RevHireApp {
             System.out.println("1. Register");
             System.out.println("2. Login");
             System.out.println("3. Back");
+            System.out.println("4. Forgot Password");
             System.out.print("Choice: ");
 
             int ch = sc.nextInt();
@@ -86,6 +88,10 @@ public class RevHireApp {
                 }
 
             } 
+            else if (ch == 3) {
+                PasswordRecoveryService prs = new PasswordRecoveryService();
+                prs.recoverPassword("JOBSEEKER");
+            }
             else {
                 return;
             }
@@ -110,8 +116,8 @@ public class RevHireApp {
             System.out.println("5. View Applications");
             System.out.println("6. Withdraw Application");
             System.out.println("7. Notifications");
-            System.out.println("8. Change Password");
-            System.out.println("9. Logout");
+            
+            System.out.println("8. Logout");
             System.out.print("Choice: ");
 
             int ch = sc.nextInt();
@@ -139,10 +145,8 @@ public class RevHireApp {
                 case 7:
                     notifService.showNotifications("JOBSEEKER", jobSeekerId);
                     break;
+
                 case 8:
-                    authService.changeJobSeekerPassword(jobSeekerId);
-                    break;
-                case 9:
                     return;
                 default:
                     System.out.println("❌ Invalid option");
@@ -162,6 +166,7 @@ public class RevHireApp {
             System.out.println("\n--- EMPLOYER MENU ---");
             System.out.println("1. Register");
             System.out.println("2. Login");
+            System.out.println("3. Forgot Password");
             System.out.println("3. Back");
             System.out.print("Choice: ");
 
@@ -187,6 +192,10 @@ public class RevHireApp {
                 }
 
             } 
+            else if (ch == 3) {
+                PasswordRecoveryService prs = new PasswordRecoveryService();
+                prs.recoverPassword("EMPLOYER");
+            }
             else {
                 return;
             }
@@ -210,8 +219,7 @@ public class RevHireApp {
             System.out.println("5. View Applicants");
             System.out.println("6. Review Applications");
             System.out.println("7. Notifications");
-            System.out.println("8. Change Password");
-            System.out.println("9. Logout");
+            System.out.println("8. Logout");
             System.out.print("Choice: ");
 
             int ch = sc.nextInt();
@@ -239,10 +247,8 @@ public class RevHireApp {
                 case 7:
                     notifService.showNotifications("EMPLOYER", employerId);
                     break;
+                
                 case 8:
-                    authService.changeEmployerPassword(employerId);
-                    break;
-                case 9:
                     return;
                 default:
                     System.out.println("❌ Invalid option");

@@ -1,11 +1,13 @@
 package com.revhire.jobseeker;
-
+import org.apache.log4j.Logger;
 import java.util.Scanner;
 
 import com.revhire.dao.ResumeDAO;
 
 public class ResumeService {
 
+    private static final Logger logger =
+        Logger.getLogger(ResumeService.class);
     ResumeDAO resumeDAO = new ResumeDAO();
 
     public void createOrUpdateResume(int jobSeekerId) {

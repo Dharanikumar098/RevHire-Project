@@ -2,12 +2,11 @@ package com.revhire.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 import com.revhire.util.DBConnection;
 
 public class ApplicationDAO {
 
-    // 🔹 Check if already applied
+    //  Check if already applied
     public boolean hasAlreadyApplied(int jobId, int jobSeekerId) {
 
         try {
@@ -30,28 +29,64 @@ public class ApplicationDAO {
         return false;
     }
 
-    // 🔹 Apply job
-    public boolean applyJob(int jobId, int jobSeekerId) {
+    // Apply job
+ // Apply job (DB insert)
+    public boolean applyJob(int jobSeekerId, int jobId) {
+
+        PreparedStatement ps = null;
 
         try {
+            // 🔹 Prevent duplicate application
+            if (hasAlreadyApplied(jobId, jobSeekerId)) {
+                System.out.println("⚠️ You already applied for this job");
+                return false;
+            }
+
             String sql =
                 "INSERT INTO applications " +
                 "(application_id, job_id, job_seeker_id, status, applied_date) " +
                 "VALUES (seq_application.NEXTVAL, ?, ?, 'APPLIED', SYSDATE)";
 
-            PreparedStatement ps =
-                DBConnection.getConnection().prepareStatement(sql);
-
+            ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setInt(1, jobId);
             ps.setInt(2, jobSeekerId);
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                // 🔔 CREATE NOTIFICATIONS
+
+                NotificationDAO notificationDAO = new NotificationDAO();
+                JobDAO jobDAO = new JobDAO();
+
+                // 🔹 Notify Job Seeker
+                notificationDAO.createNotification(
+                    "JOBSEEKER",
+                    jobSeekerId,
+                    "You successfully applied for Job ID: " + jobId
+                );
+
+                // 🔹 Notify Employer
+                int employerId = jobDAO.getEmployerIdByJob(jobId);
+                if (employerId != -1) {
+                    notificationDAO.createNotification(
+                        "EMPLOYER",
+                        employerId,
+                        "New application received for Job ID: " + jobId
+                    );
+                }
+
+                return true;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try { if (ps != null) ps.close(); } catch (Exception ignored) {}
         }
         return false;
     }
+
     public ResultSet getMyApplications(int jobSeekerId) {
 
         try {
@@ -73,7 +108,7 @@ public class ApplicationDAO {
         }
         return null;
     }
- // 🔹 Check if application belongs to user and is APPLIED
+ // Check if application belongs to user and is APPLIED
     public boolean canWithdraw(int applicationId, int jobSeekerId) {
 
         try {
@@ -96,26 +131,33 @@ public class ApplicationDAO {
         return false;
     }
 
-    // 🔹 Withdraw application
+    // Withdraw application
     public boolean withdrawApplication(int applicationId) {
+
+        PreparedStatement ps = null;
 
         try {
             String sql =
-                "UPDATE applications SET status='WITHDRAWN' " +
-                "WHERE application_id=?";
+                "UPDATE applications " +
+                "SET status = 'WITHDRAWN' " +
+                "WHERE application_id = ?";
 
-            PreparedStatement ps =
-                DBConnection.getConnection().prepareStatement(sql);
-
+            ps = DBConnection.getConnection().prepareStatement(sql);
             ps.setInt(1, applicationId);
 
-            return ps.executeUpdate() > 0;
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;   // 🔑 MUST RETURN BOOLEAN
 
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (ps != null) ps.close();
+            } catch (Exception ignored) {}
         }
-        return false;
     }
+
     public ResultSet getApplicantsForJob(int jobId, int employerId) {
 
         try {
@@ -140,7 +182,7 @@ public class ApplicationDAO {
         }
         return null;
     }
- // 🔹 Get Job Seeker ID for an application (ownership safe)
+ // Get Job Seeker ID for an application (ownership safe)
     public int getJobSeekerIdByApplication(int applicationId, int employerId) {
 
         try {

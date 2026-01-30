@@ -51,9 +51,16 @@ public class NotificationDAO {
         return null;
     }
 
-    public void markAsRead(int notificationId) {
+    public boolean markAsRead(
+            int notificationId,
+            String userType,
+            int userId) {
 
         try {
+            if (!isNotificationBelongsToUser(notificationId, userType, userId)) {
+                return false;
+            }
+
             String sql =
                 "UPDATE notifications SET is_read='Y' WHERE notification_id=?";
 
@@ -61,10 +68,39 @@ public class NotificationDAO {
                 DBConnection.getConnection().prepareStatement(sql);
 
             ps.setInt(1, notificationId);
-            ps.executeUpdate();
+
+            return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
+
+    public boolean isNotificationBelongsToUser(
+            int notificationId,
+            String userType,
+            int userId) {
+
+        try {
+            String sql =
+                "SELECT notification_id FROM notifications " +
+                "WHERE notification_id=? AND user_type=? AND user_id=?";
+
+            PreparedStatement ps =
+                DBConnection.getConnection().prepareStatement(sql);
+
+            ps.setInt(1, notificationId);
+            ps.setString(2, userType);
+            ps.setInt(3, userId);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

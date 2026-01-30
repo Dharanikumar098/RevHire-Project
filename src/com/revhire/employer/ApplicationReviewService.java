@@ -22,7 +22,7 @@ public class ApplicationReviewService {
             applicationDAO.getJobSeekerIdByApplication(applicationId, employerId);
 
         if (jobSeekerId == -1) {
-            System.out.println("❌ Invalid application or access denied");
+            System.out.println("Invalid application or access denied");
             return;
         }
 
@@ -30,7 +30,7 @@ public class ApplicationReviewService {
         String action = sc.nextLine().toUpperCase();
 
         if (!action.equals("SHORTLIST") && !action.equals("REJECT")) {
-            System.out.println("❌ Invalid action");
+            System.out.println("Invalid action");
             return;
         }
 
@@ -42,10 +42,10 @@ public class ApplicationReviewService {
                 "Your application has been " + action
             );
 
-            System.out.println("✅ Application " + action + "ED successfully");
+            System.out.println("Application " + action + "ED successfully");
 
         } else {
-            System.out.println("❌ Failed to update application");
+            System.out.println("Failed to update application");
         }
     }
 }

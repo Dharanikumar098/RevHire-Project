@@ -27,10 +27,10 @@ public class JobSeekerService {
                 int completion =
                     resumeDAO.getProfileCompletion(jobSeekerId);
 
-                System.out.println("📊 Profile Completion: " + completion + "%");
+                System.out.println("Profile Completion: " + completion + "%");
 
             } else {
-                System.out.println("❌ Profile not found");
+                System.out.println(" Profile not found");
             }
 
         } catch (Exception e) {

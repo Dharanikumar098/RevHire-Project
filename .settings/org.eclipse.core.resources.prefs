@@ -1,8 +1,9 @@
-#Fri Jan 30 00:37:18 IST 2026
+#Fri Jan 30 18:44:40 IST 2026
 eclipse.preferences.version=1
 encoding//src/com/revhire/auth/AuthenticationService.java=UTF-8
 encoding//src/com/revhire/auth/PasswordRecoveryService.java=UTF-8
 encoding//src/com/revhire/dao/ApplicationDAO.java=UTF-8
+encoding//src/com/revhire/dao/EmployerDAO.java=UTF-8
 encoding//src/com/revhire/dao/JobDAO.java=UTF-8
 encoding//src/com/revhire/dao/NotificationDAO.java=UTF-8
 encoding//src/com/revhire/dao/ResumeDAO.java=UTF-8

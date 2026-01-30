@@ -8,27 +8,42 @@ import com.revhire.util.DBConnection;
 public class JobSeekerDAO {
 
     // ================= REGISTER =================
-    public boolean registerJobSeeker(String name, String email, String password) {
+	public boolean registerJobSeeker(
+	        String name,
+	        String email,
+	        String password,
+	        String phone,
+	        String location,
+	        int experience,
+	        String secQ,
+	        String secA) {
 
-        try {
-            String sql =
-                "INSERT INTO job_seekers (job_seeker_id, full_name, email, password) " +
-                "VALUES (seq_job_seeker.NEXTVAL, ?, ?, ?)";
+	    try {
+	        String sql =
+	            "INSERT INTO job_seekers " +
+	            "(job_seeker_id, full_name, email, password, phone, location, experience_years, security_question, security_answer) " +
+	            "VALUES (seq_job_seeker.NEXTVAL,?,?,?,?,?,?,?,?)";
 
-            PreparedStatement ps =
-                DBConnection.getConnection().prepareStatement(sql);
+	        PreparedStatement ps =
+	            DBConnection.getConnection().prepareStatement(sql);
 
-            ps.setString(1, name);
-            ps.setString(2, email);
-            ps.setString(3, password);
+	        ps.setString(1, name);
+	        ps.setString(2, email);
+	        ps.setString(3, password);
+	        ps.setString(4, phone);
+	        ps.setString(5, location);
+	        ps.setInt(6, experience);
+	        ps.setString(7, secQ);
+	        ps.setString(8, secA);
 
-            return ps.executeUpdate() > 0;
+	        return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
 
     // ================= LOGIN =================
     public int loginAndGetJobSeekerId(String email, String password) {

@@ -3,9 +3,10 @@ import java.util.*;
 import java.sql.ResultSet;
 
 import com.revhire.dao.EmployerDAO;
-
+import org.apache.log4j.Logger;
 public class EmployerService {
-
+	 private static final Logger logger =
+		        Logger.getLogger(EmployerService.class);
     EmployerDAO employerDAO = new EmployerDAO();
 
     public void viewCompanyProfile(int employerId) {
