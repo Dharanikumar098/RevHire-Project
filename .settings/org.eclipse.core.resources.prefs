@@ -1,0 +1,18 @@
+#Fri Jan 30 00:37:18 IST 2026
+eclipse.preferences.version=1
+encoding//src/com/revhire/auth/AuthenticationService.java=UTF-8
+encoding//src/com/revhire/auth/PasswordRecoveryService.java=UTF-8
+encoding//src/com/revhire/dao/ApplicationDAO.java=UTF-8
+encoding//src/com/revhire/dao/JobDAO.java=UTF-8
+encoding//src/com/revhire/dao/NotificationDAO.java=UTF-8
+encoding//src/com/revhire/dao/ResumeDAO.java=UTF-8
+encoding//src/com/revhire/employer/ApplicationReviewService.java=UTF-8
+encoding//src/com/revhire/employer/EmployerService.java=UTF-8
+encoding//src/com/revhire/employer/JobPostingService.java=UTF-8
+encoding//src/com/revhire/jobseeker/ApplicationService.java=UTF-8
+encoding//src/com/revhire/jobseeker/JobSearchService.java=UTF-8
+encoding//src/com/revhire/jobseeker/JobSeekerService.java=UTF-8
+encoding//src/com/revhire/jobseeker/ResumeService.java=UTF-8
+encoding//src/com/revhire/main/RevHireApp.java=UTF-8
+encoding//src/com/revhire/notification/NotificationService.java=UTF-8
+encoding//src/com/revhire/util/DBConnection.java=UTF-8
